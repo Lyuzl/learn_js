@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JSON、JavaScript对象一</title>
+	<script type="text/javascript">
+		'use strict';
+		/*var xiaoming = {
+			name: 'xiaoming',
+			age: 13,
+			gender: true,
+			height: 1.73,
+			grade: null,
+			'middle-school':'\"W3C\" Middle-School',
+			skills: ['javascript', 'Java', 'Python', 'Scala']
+		};
+		console.log(JSON.stringify(xiaoming));
+		//加上参数，按缩进输出。这样更好看一些
+		console.log(JSON.stringify(xiaoming, null, '	'));
+		//第二个参数用于控制如何筛选对象的键值，如果我们只想输出指定的属性，可以传入Array：
+		console.log(JSON.stringify(xiaoming, ['name', 'skills'], '	'));
+
+		//还可以传入一个函数，这样对象的每个键值对都会被函数先处理：
+		function convert(key, value){
+			if(typeof value === 'string'){
+				return value.toUpperCase();
+			}
+			return value;
+		}
+		console.log(JSON.stringify(xiaoming, convert, '	'));
+
+
+		//如果我们还想要精确控制如何序列化小明，可以给xiaoming定义一个toJSON()的方法，直接返回JSON应该序列化的数据：
+		var xiaoming1 = {
+			name: 'xiaoming',
+			age: 13,
+			gender: true,
+			height: 1.73,
+			grade: null,
+			'middle-school':'\"W3C\" Middle-School',
+			skills: ['javascript', 'Java', 'Python', 'Scala'],
+			toJSON: function(){
+				return {  //只输出name和age，而且还改变了key。
+					'Name': this.name,
+					'Age': this.age
+				}
+			}
+		};
+		console.log(JSON.stringify(xiaoming1));
+
+		JSON.parse('{"name":"小明","age":14}', function(key, value){
+			if(key === 'name'){
+				return value + '童鞋';
+			}
+			return value;
+		});
+
+		//注意原Yahoo天气网站的json字符串中的/n的原文应该是//n，这是转义后的。
+		console.log('反序列化后的对象：' + JSON.parse('{"query":{"count":1,"created":"2016-10-16T05:32:32Z","lang":"en-US","results":{"channel":{"units":{"distance":"mi","pressure":"in","speed":"mph","temperature":"F"},"title":"Yahoo! Weather - Beijing, Beijing, CN","link":"http://us.rd.yahoo.com/dailynews/rss/weather/Country__Country/*https://weather.yahoo.com/country/state/city-2151330/","description":"Yahoo! Weather for Beijing, Beijing, CN","language":"en-us","lastBuildDate":"Sun, 16 Oct 2016 01:32 PM CST","ttl":"60","location":{"city":"Beijing","country":"China","region":" Beijing"},"wind":{"chill":"66","direction":"225","speed":"7"},"atmosphere":{"humidity":"65","pressure":"1013.0","rising":"0","visibility":"16.1"},"astronomy":{"sunrise":"6:27 am","sunset":"5:32 pm"},"image":{"title":"Yahoo! Weather","width":"142","height":"18","link":"http://weather.yahoo.com","url":"http://l.yimg.com/a/i/brand/purplelogo//uh/us/news-wea.gif"},"item":{"title":"Conditions for Beijing, Beijing, CN at 12:00 PM CST","lat":"39.90601","long":"116.387909","link":"http://us.rd.yahoo.com/dailynews/rss/weather/Country__Country/*https://weather.yahoo.com/country/state/city-2151330/","pubDate":"Sun, 16 Oct 2016 12:00 PM CST","condition":{"code":"28","date":"Sun, 16 Oct 2016 12:00 PM CST","temp":"65","text":"Mostly Cloudy"},"forecast":[{"code":"28","date":"16 Oct 2016","day":"Sun","high":"68","low":"53","text":"Mostly Cloudy"},{"code":"32","date":"17 Oct 2016","day":"Mon","high":"68","low":"51","text":"Sunny"},{"code":"32","date":"18 Oct 2016","day":"Tue","high":"68","low":"48","text":"Sunny"},{"code":"34","date":"19 Oct 2016","day":"Wed","high":"72","low":"51","text":"Mostly Sunny"},{"code":"28","date":"20 Oct 2016","day":"Thu","high":"64","low":"56","text":"Mostly Cloudy"},{"code":"26","date":"21 Oct 2016","day":"Fri","high":"61","low":"56","text":"Cloudy"},{"code":"28","date":"22 Oct 2016","day":"Sat","high":"58","low":"51","text":"Mostly Cloudy"},{"code":"30","date":"23 Oct 2016","day":"Sun","high":"56","low":"43","text":"Partly Cloudy"},{"code":"28","date":"24 Oct 2016","day":"Mon","high":"57","low":"42","text":"Mostly Cloudy"},{"code":"30","date":"25 Oct 2016","day":"Tue","high":"59","low":"47","text":"Partly Cloudy"}],"description":"<![CDATA[<img src=\\"http://l.yimg.com/a/i/us/we/52/28.gif\\"/>\\n<BR />\\n<b>Current Conditions:</b>\\n<BR />Mostly Cloudy\\n<BR />\\n<BR />\\n<b>Forecast:</b>\\n<BR /> Sun - Mostly Cloudy. High: 68Low: 53\\n<BR /> Mon - Sunny. High: 68Low: 51\\n<BR /> Tue - Sunny. High: 68Low: 48\\n<BR /> Wed - Mostly Sunny. High: 72Low: 51\\n<BR /> Thu - Mostly Cloudy. High: 64Low: 56\\n<BR />\\n<BR />\\n<a href=\\"http://us.rd.yahoo.com/dailynews/rss/weather/Country__Country/*https://weather.yahoo.com/country/state/city-2151330/\\">Full Forecast at Yahoo! Weather</a>\\n<BR />\\n<BR />\\n(provided by <a href=\\"http://www.weather.com\\" >The Weather Channel</a>)\\n<BR />\\n]]>","guid":{"isPermaLink":"false"}}}}}}'));*/
+
+
+		//面相对象编程
+		/*var Student = {   //相当于父类
+			name: 'Robot',
+			height: 1.63,
+			run: function(){
+				console.log(this.name + 'is running.');
+			}
+		};
+
+		var xiaoming = {
+			name: '小明'
+		}
+
+		xiaoming.__proto__ = Student;
+		console.log(xiaoming.name);  //小明
+		console.log(xiaoming.run());  //小明is running.
+
+		var Bird = {
+			fly: function(){
+				console.log(this.name + 'is flying.');
+			}
+		}
+		xiaoming.__proto__ = Bird;
+		console.log(xiaoming.fly());
+		console.log(xiaoming.run());//此时小明已经不能run了*/
+
+		//obj.__proto__改变对象原型的方法不推荐，实际中我们使用Object.create()方法传入一个原型对象，并创建一个基于该原型对象的新的对象。但是新对象什么都没有。
+
+	/*	var Student = {   //原型对象
+			name: 'Robot',
+			height: 1.63,
+			run: function(){
+				console.log(this.name + 'is running.');
+			}
+		};
+
+	    function createStudent(name){
+	    	//基于Student创建一个新对象
+	    	var s = Object.create(Student);
+	    	//初始化新对象
+	    	s.name = name;
+	    	return s;
+		}
+
+		var xiaoming = createStudent('小明');
+		xiaoming.run();
+		console.log(xiaoming.__proto__ === Student);*/
+
+		//****************  javascript封装  ********************
+		//原型
+		var Cat = {
+			name: '',
+			color: ''
+		}
+
+		var cat1 = {}; //创建一个空对象
+			cat1.name = "大毛";  //按照原型对象的属性赋值 
+			cat1.color = '黄色';
+		var cat2 = {}; 
+			cat2.name = "二毛";  
+			cat2.color = '黑色';
+		//这是最简单的封装了
+
+		//改进
+		function Cat(name, color){
+			return {
+				name: name,
+				color: color
+			}
+		}
+
+		var cat1 = Cat("大毛", "黄色");
+		var cat2 = Cat("二毛", "黑色");
+		//这种方式依然看不出cat1和cat2之间有什么联系
+
+		//接着改！构造函数模式 Constructor this
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+		var cat1 = new Cat("大毛", "黄色");
+		var cat2 = new Cat("二毛", "黑色");
+		console.log(cat1.name); // 大毛
+　　	console.log(cat1.color); // 黄色
+
+		alert(cat1 instanceof Cat); //true
+	　　alert(cat2 instanceof Cat); //true
+
+		//第三种方法就完美无缺了吗？我们接着看
+		function Cat(name,color){
+	　　　　this.name = name;
+	　　　　this.color = color;
+	　　　　this.type = "猫科动物";
+	　　　　this.eat = function(){alert("吃老鼠");};
+　　    }
+		//用同样的方法生成实例
+		var cat1 = new Cat("大毛", "黄色");
+		var cat2 = new Cat("二毛", "黑色");
+		console.log(cat1.type); //猫科动物
+		console.log(cat1.eat()); //吃老鼠、
+
+		console.log(cat1.eat === cat2.eat);  //false
+		//表面上好像没什么问题，但是实际上这样做，有一个很大的弊端。那就是对于每一个实例对象，type属性和eat()方法都是一模一样的内容，每一次生成一个实例，都必须为重复的内容，多占用一些内存。这样既不环保，也缺乏效率。
+
+		//继续改进，第四种方式，protoType模式
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+		Cat.prototype.type = '猫科动物';
+		Cat.prototype.eat = function(){
+			console.log('吃老鼠');
+		};
+		var cat1 = new Cat("大毛", "黄色");
+		var cat2 = new Cat("二毛", "黑色");
+		console.log(cat1.type); //猫科动物
+		console.log(cat1.eat()); //吃老鼠、
+
+		console.log(cat1.eat === cat2.eat);  //true
+
+		alert(Cat.prototype.isPrototypeOf(cat1)); //true
+　　　　alert(Cat.prototype.isPrototypeOf(cat2)); //true
+
+
+	</script>
+</head>
+<body>
+	<h2>json test.</h2>
+</body>
+</html>

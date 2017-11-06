@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>jquery基础</title>
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript">
+		//$本质上就是一个函数，但是函数也是对象，于是$除了可以直接调用外，也可以有很多其他属性
+
+		//先加载完DOM元素再执行JS代码的三种方式
+		//方法一
+		/*$(function(){  //等同于 jQuery(function(){});
+			console.log($.fn.jquery);
+		});*/
+		//方法二
+		/*$(document).ready(function(){
+			console.log($.fn.jquery);
+		});
+		*/
+		//方法三
+		/*window.onload = function(){
+			alert(document.getElementById('name').innerHTML);
+		};*/
+		
+		jQuery(function(){
+			// console.log($ === jQuery);
+			// console.log($("#hello"));
+			// var div = $('#address');
+			// var pDom = div.get(0);
+			// console.log(pDom);
+
+			// var p = $('p');
+			// console.log(p);
+
+			//层级选择器
+			$('ul.lang li.lang-javascript'); // [<li class="lang-javascript">JavaScript</li>]
+			$('div.testing li.lang-javascript'); // [<li class="lang-javascript">JavaScript</li>]
+
+			//缩小层级范围选择元素 选择name为upload的form下的input
+			var input = $('form[name=upload] input');
+			console.log(input)
+			//选择样式名为test的form下的<p>标签包含的input输入框，且name为email
+			var input2 = $('form.test p input[name=favorite]');
+			console.log(input2)
+
+			//子选择器
+			$('ul.lang>li.lang-js');  // 可以选出[<li class="lang-javascript">JavaScript</li>]
+			$('div#testing>li.lang-js'); // [], 无法选出，因为<div>和<li>不构成父子关系
+
+			//同级元素
+			$('div[name=Beijing-today]').siblings('div').css('background-color', 'orange');
+
+		});
+	</script>
+</head>
+<body>
+	<div id="name">id = name</div>
+	<div class="bottom">class = bottom</div>
+	<div id="address">
+		<p class="red">北京</p>
+		<p class="green red">上海</p>
+		<p class="green blue icon-1">信阳</p>
+	</div>
+
+	<div>
+		<form name='regeist'>
+			姓名：<input type="text" name="username" disabled="true">
+			邮箱：<input type="password" name="password" id="password">
+			其它：<input type="" name="" items="A B">
+			隐藏域：<input type="hidden" name="hidden">
+			<p>	性别：
+				<input id="man" type="radio" name="gender" value="man"><label for="man">大哥哥</label>
+				<input id="woman" type="radio" name="gender" value="woman"><label for="woman">小姐姐</label>
+			</p>
+			<p>
+				爱好：
+				<input id="horse" type="checkbox" name="hobby"><label for="horse">骑马</label>
+				<input id="travel" type="checkbox" name="hobby"><label for="travel">出去浪</label>
+				<input id="game" type="checkbox" name="hobby"><label for="game">我的世界</label>
+			</p>
+			<input type="button" name="submit" value="submit">
+		</form>
+		<form name='upload'>
+			用户ID：<input type="text" name="id">
+			用户email：<input type="text" name="email">
+			<input type="file" name="upload">
+		</form>
+		<form class='test'>
+			<p>
+				地址：<input type="text" name="address">
+				爱好：<input type="text" name="favorite">
+			</p>
+		</form>
+		<div name="username">用户名</div>
+		<div name="icon-1" class="icon-1">icon-1</div>
+		<div name="icon-2" class="abc icon-1">icon-2</div>
+		<div name="icon-3">icon-3</div>
+		<div name="Beijing-today">北京今日</div>
+		<div name="shanghai-today">上海今日</div>
+	</div>
+
+	<div class="testing">
+		<ul class="lang">
+			<li class="lang-js">javascript</li>
+			<li class="lang-java">java</li>
+			<li class="lang-python">python</li>
+		</ul>
+	</div>
+
+	<select>
+		<option>幼儿园</option>
+		<option>小学</option>
+		<option>大学</option>
+		<option>博士</option>
+	</select>
+
+	霸王条款：<textarea>
+		你不得不接受的条目！
+	</textarea>
+</body>
+</html>

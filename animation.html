@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>动画</title>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+    	$(function(){
+    		$('#test-p').hide(1000);  // 在3秒钟内逐渐消失
+    		$('#test-p').show(1000);  // 在3秒钟内逐渐显示
+    		var button = $('#toggle');
+    		button.click(function(){
+    			$('#test-p').toggle('slow');
+    		});
+    		
+    		$('#slideUp').click(function(){  //在3秒内逐渐向上消失
+    			$('#test-slide').slideUp(3000);
+    		});
+    		$('#slideDown').click(function(){
+    			$('#test-slide').slideDown(3000);
+    		});
+    		$('#slideToggle').click(function(){
+    			$('#test-slide').slideToggle(3000);
+    		});
+
+    		$('#fadeOut').click(function(){ //在0.6s内淡出
+    			$('#test-slide').fadeOut('slow');
+    		});
+    		$('#fadeIn').click(function(){
+    			$('#test-slide').fadeIn(3000);
+    		});
+    		$('#fadeToggle').click(function(){
+    			$('#test-slide').fadeToggle('fast');
+    		});
+
+    		var div = $('#test-animate');
+			// div.animate({
+			// 	opacity: 0.25,
+			// 	width: '256px',
+			// 	height: '256px'
+			// }, 3000);  // 在3秒钟内CSS过渡到设定值
+
+			//animate还可以传入一个函数，当动画结束后该函数将被调用
+			div.animate({
+				opacity: 0.25,
+				width: '256px',
+				height: '256px'
+			}, 3000, function(){
+				console.log('动画结束！！');
+				$(this).css('opacity', '1.0').css('width', '128px').css('height', '128px');
+			});
+
+			//串行动画
+
+			//jQuery的动画效果还可以串行执行，通过delay()方法还可以实现暂停，这样，我们可以实现更复杂的动画效果，而代码却相当简单
+    		function magicAnimation(){
+    			var div = $('#test-animate');
+    			// 动画效果：slideDown - 暂停 - 放大 - 暂停 - 缩小
+    			div.slideUp(2000)
+    				.slideDown(2000)
+					.delay(1000)
+					.animate({
+						opacity: 0.5,
+						width: '256px',
+						height: '256px'
+					}, 2000)
+					.delay(1000)
+					.animate({
+						opacity: 1.0,
+						width: '128px',
+						height: '128px'
+					}, 2000);
+    		}
+    		$('#animateBtn').click(magicAnimation);
+    	});
+    </script>
+</head>
+<body>
+	<p id="test-p" style="background-color: orange; height: 100px; width: 300px; font-size: 20">多么美好的一天</p>
+	<button id="toggle">toggle</button>
+	<hr>
+	<p id="test-slide" style="background-color: yellow; width: 128px; height: 128px">笑脸</p>
+	<button id="slideUp">slideUp</button>
+	<button id="slideDown">slideDown</button>
+	<button id="slideToggle">slideToggle</button><br>
+	<button id="fadeOut">fadeOut</button>
+	<button id="fadeIn">fadeIn</button>
+	<button id="fadeToggle">fadeToggle</button>
+	<hr>
+
+	<div id="test-animate" style="background-color: blue; width: 128px; height: 128px">神奇动画啦啦啦</div>
+	<button id="animateBtn">神奇动画</button>
+</body>
+</html>

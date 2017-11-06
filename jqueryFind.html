@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>jquery查找过滤</title>
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript">
+		'use strict';
+		$(function(){
+			var ul = $("ul.lang");   // 获得<ul>
+			var dy = ul.find('.dy'); // 获得JavaScript, Python, Scheme
+			var swift = ul.find('#swift');
+			var hask = ul.find('[name=haskell]'); // 获得Haskell
+			for(var i = 0; i < dy.length; i++){
+			    console.log(dy.get(i));
+			}
+			console.log(hask.get(0));  // <li name="haskell">Haskell</li>
+			console.log(hask.get(0).innerHTML); //Haskell
+
+			//从当前节点向上查找
+			var swf = $('#swift'); //获得swift
+			var parent = swf.parent(".lang"); //parent()方法同理，直接父节点匹配则返回，否则为空，不再向上层继续查找。
+			var next = swf.next(".dy");   //next()方法是找下一个相邻元素，如果找到就返回相应元素，否则为空，并不会一直向后查找。
+			console.log(parent);
+			console.log(next);
+
+			//过滤
+			var langs = $('ul.lang li'); // 拿到JavaScript, Python, Swift, Scheme和Haskell
+			var a = langs.filter('.dy'); // 拿到JavaScript, Python, Scheme
+			//或者传入一个方法
+			var b = langs.filter(function(){
+				return this.innerHTML.indexOf('S') === 0;  //返回S开头的节点
+			}); // 拿到Swift, Scheme
+			for(var i = 0; i < b.length; i++){
+			    console.log(b.get(i));
+			}  
+
+			//map
+			var arr = langs.map(function(){
+				return this.innerHTML;
+			}).get();
+			console.log(arr); // 用get()拿到包含string的Array：['JavaScript', 'Python', 'Swift', 'Scheme', 'Haskell']
+
+			var js = langs.first(); // JavaScript，相当于$('ul.lang li:first-child')
+			var haskell = langs.last(); // Haskell, 相当于$('ul.lang li:last-child')
+			var sub = langs.slice(2, 4); // Swift, Scheme, 参数和数组的slice()方法一致
+
+			//******************** 作业  ***************************
+			var json = null;
+			var msg = {};
+			msg.name = $('[name=name]').val();
+			msg.email = $('[name=email]').val();
+			msg.password = $('[type=password]').val();
+			msg.gender = $('input[type=radio]:checked').val();
+			msg.city = $('select[name=city] option:selected').val();
+			console.log(JSON.stringify(msg));
+
+
+			var div = $('#test-div');
+			div.attr('data'); // undefined, 属性不存在
+			div.attr('name'); // 'Test'
+			div.attr('name', 'Hello'); // div的name属性变为'Hello'
+			div.removeAttr('name'); // 删除name属性
+			div.attr('name'); // undefined
+
+			var radio = $('#test-radio');
+			radio.attr('checked'); // 'checked'
+			radio.prop('checked'); // true  prop()返回值更合理一些。不过，用is()方法判断更好：
+			radio.is(':checked'); // true
+			//类似的属性还有selected，处理时最好用is(':selected')。
+
+		});
+	</script>
+</head>
+<body>
+	<!-- HTML结构 -->
+	<div style="color: red;background-color: green" id="test-div" name="TTest">
+		<ul class="lang">
+		    <li class="js dy">JavaScript</li>
+		    <li class="dy">Python</li>
+		    <li id="swift">Swift</li>
+		    <li class="dy">Scheme</li>
+		    <li name="haskell">Haskell</li>
+		</ul>
+		<p>测试radio: <input type="radio" id="test-radio"  checked value="1"><label>啊哈</label>
+					<input type="radio" name = "test-radio" value="2"><label>吼吼</label>
+		</p>
+		<div class="red"></div>
+		<div class="blue"></div>
+	</div>
+
+
+	<form id="test-form" action="#0" onsubmit="return false;">
+	    <p><label>Name: <input name="name" id="name"></label></p>
+	    <p><label>Email: <input name="email"></label></p>
+	    <p><label>Password: <input name="password" type="password"></label></p>
+	    <p>Gender: <label><input name="gender" type="radio" value="m" checked> Male</label> 
+	    		   <label><input name="gender" type="radio" value="f"> Female</label>
+	    </p>
+	    <p><label>City: <select id="city" name="city">
+					        <option id="test-select" value="BJ" selected>Beijing</option>
+					        <option value="SH">Shanghai</option>
+					        <option value="CD">Chengdu</option>
+					        <option value="XM">Xiamen</option>
+	         			</select>
+	        </label>
+	    </p>
+	    <p><button type="submit">Submit</button></p>
+	</form>
+
+</body>
+</html>

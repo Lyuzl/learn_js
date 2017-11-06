@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<script>
+		$(document).ready(function(){
+			console.log('init..' + 11111);
+		});
+
+		//这种写法最为常见。如果你遇到$(function () {...})的形式，牢记这是document对象的ready事件处理函数。
+
+		//完全可以反复绑定事件处理函数，它们会依次执行：
+		$(function(){
+			console.log('init..'  + 22222);
+		});
+		$(function(){
+			console.log('init..' + 33333);
+		});
+		$(function(){
+			console.log('init..' + 44444);
+		});
+
+		$(function(){
+			var button1 = $('#button1');
+			var button2 = $('#button2');
+
+			function popupTestWindow(){
+				window.open('http://www.apple.cn');
+			}
+			button1.click(function(){
+				popupTestWindow();
+			});
+
+			button2.click(function(){
+				setTimeout(popupTestWindow, 100);
+			});
+		});
+		
+    </script>
+</head>
+<body>
+	<button id="button1">button1</button>
+	<button id="button2">button2</button>
+</body>
+</html>

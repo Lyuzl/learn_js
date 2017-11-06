@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>操作表单</title>
+	<script type="text/javascript">
+		window.onload = function(){
+			var input = document.getElementById('username');
+			var username = input.value;
+		}
+	</script>
+</head>
+<body>
+    <form method="post" action="">
+    	姓名：<input type="text" id ="username"><br>
+    	口令:<input type="password" id="password"><br>
+
+    	<label><input type="radio" name="weekday" id="monday" value="1"> Monday</label>
+		<label><input type="radio" name="weekday" id="tuesday" value="2"> Tuesday</label><br>
+
+    	<input type="date" value="2017-09-22">
+    	<input type="datetime" value="20170922">
+    	<input type="datetime-local" value="2017-09-22T14:36:59">
+    	<input type="year" value='2017'>
+    	<input type="month" value='09'>
+    	<input type="week">
+    	<input type="time">
+    	<input type="color" value="#ff0000">
+    </form>
+</body>
+</html>

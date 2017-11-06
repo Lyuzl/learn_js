@@ -1,0 +1,645 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache">
+<meta http-equiv="Expires" content="0">
+<title>珠江啤酒能源管理系统</title>
+<link rel="stylesheet" href="js/jquery-ui/themes/base/jquery.ui.all.css">
+<link rel="stylesheet" href="js/jquery-ui/jqgrid/css/ui.jqgrid.css">
+<link rel="stylesheet" href="css/dyk.css"/>
+<link rel="stylesheet" href="css/validationEngine.jquery.css" type="text/css"/>
+<link rel="stylesheet" href="css/template.css" type="text/css"/>
+<script type="text/javascript" src="js/jquery-ui/jquery-1.6.2.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.core.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.widget.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.mouse.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.accordion.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.button.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.menu.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.draggable.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.popup.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.position.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.resizable.js"></script>
+<script type="text/javascript" src="js/jquery-ui/ui/jquery.ui.dialog.js"></script>
+<script type="text/javascript" src="js/jquery-ui/jquery.validationEngine-cn.js"></script>
+<script type="text/javascript" src="js/jquery-ui/jquery.validationEngine.js"></script>
+<script type="text/javascript" src="skin/red/js/js.js"></script>
+<script type="text/javascript" src="skin/red/js/utilities.js"></script>
+<script type="text/javascript" src="js/dyk.js"></script>
+<script type="text/javascript" src="js/appMessage.js"></script>
+<script type="text/javascript" src="js/md5.js"></script>
+
+<script type="text/javascript">
+	$(function() {
+		$('#errorInfo').html('&nbsp;');
+		$("#userId").focus();
+		$("#signMsg").click(signMsg);
+		changePlantType();
+	});
+
+	//判断是否记住密码，1为记住，0为忘记
+	function getRememberFlg(){
+		if($("input[name='remember']")[0].checked){
+			return "1";
+		}else
+			return "0";
+	}
+	
+	var isSubmit = false;
+	function loginSubmit() {
+		$('#errorInfo').html('&nbsp;');
+		if (isSubmit) {
+			return false;
+		}
+		isSubmit = true;
+
+		//lvzl 2017/09/25 密码添加MD5加密
+		var input_password = document.getElementById('psw');
+		var md5_password = document.getElementById('md5-password');
+		md5_password.value = hex_md5(input_password.value);
+
+		var userId = $("#userId").val();
+		var psw = md5_password.value;
+		
+		var rememberFlg = getRememberFlg();
+		var inputModel = "";
+		$("input[name='model']:checked").each(function(){
+			inputModel = $(this).val();
+		});
+		if ($.trim(userId).length <= 0) {
+			$('#errorInfo').html(EMS_W0001);
+			$("#userId").val('');
+			$("#userId").focus();
+		} else if (!isDigit(userId)) {
+			$('#errorInfo').html(EMS_W0001);
+			$("#userId").val('');
+			$("#userId").focus();
+		} else if (psw.length <= 0) {
+			$('#errorInfo').html(EMS_W0002);
+			$("#psw").focus();
+		} else {
+			jQuery.ajax({
+				type : "POST",
+				url : "loginSubmit.action",
+				data : "userId=" + userId + "&psw=" + psw+"&type="+inputModel + "&rememberFlg="+rememberFlg,
+				dataType : "text",
+				context : document.body,
+				async : false,
+				success : function(html) {
+					if (html.length <= 0) {
+						popupdykWin();
+					} else {
+						$('#errorInfo').html(html);
+						$('#psw').focus();
+					}
+				},
+				error : function() {
+					$('#errorInfo').html(EMS_E0001);
+				}
+			});
+			$("#psw").val(''); //防止二次点击2012.08.22
+		}
+		isSubmit = false;
+		return false;
+	}
+
+	var dykWin;
+	function popupdykWin() {
+		var winprops = 'status=yes,resizable=yes,location=yes,menubar=yes,toolbar=yes';
+		if (dykWin != null) {
+			dykWin.close();
+			dykWin = null;
+		}
+
+		if (dykWin) {
+			//var w = screen.availWidth;
+			//var h = screen.availHeight;
+			dykWin.moveTo(0, 0);
+			dykWin.resizeTo(screen.availWidth, screen.availHeight);
+		}
+		if (dykWin == window) {
+			window.opener = null;
+// 			window.open('', '_self');
+// 			window.close();
+			dykWin.focus();
+			if (dykWin && !dykWin.closed) {
+				dykWin.document.location.replace("afems.action");
+				dykWin.focus();
+			}
+		} else {
+			window.focus();
+			if (window && !window.closed) {
+				window.document.location.replace("afems.action");
+				window.focus();
+			}
+		}
+	}
+
+	function isDigit(s) {
+		//var patrn=/^[0-9]{1,7}$/; 
+		//if (!patrn.test(s)) return false;
+		return true;
+	}
+	function userId_keyup() {
+		var userId = $("#userId").val();
+		if (userId.length == 7) {
+			$("#psw").focus();
+		}
+	}
+	function keyLogin() {
+		if (event.keyCode == 13) //回车键的键值为13  
+			loginSubmit(); //调用登录按钮的登录事件  
+	}
+	function operate_set() {
+		clearEditData();
+
+		document.getElementById("userCode").disabled=false;
+		document.getElementById("userPassword").disabled=false;
+		document.getElementById("confirmPwd").disabled=false;
+		document.getElementById("userName").disabled=false;
+		document.getElementById("userDescription").disabled=false;
+		document.getElementById("userEmail").disabled=false;
+		document.getElementById("userPhone").disabled=false;
+		document.getElementById("userSex").disabled=false;
+		document.getElementById("pubValid1").checked = true;
+		document.getElementById("userTitle").disabled=false;
+		document.getElementById("plantTypeV").disabled=false;
+		document.getElementById("userUrl").disabled=false;
+	}
+	// 清空编辑区域
+	function clearEditData(){
+		$("#userCode").val('');
+		$("#userPassword").val('');
+		$("#confirmPwd").val('');
+		$("#userName").val('');
+		$("#userDescription").val('');
+		$("#userEmail").val('');
+		$("#userPhone").val('');
+		$("#userSex")[0].selectedIndex=0;
+//			$("#userTitle").val('');
+		$("#userUrl").val('');
+		$("#pubUser").val('');
+		$("#formatModifyTime").val('');
+	}
+	//用户注册
+	function signMsg(){
+		$("#plantTypeV option")[0].selected = true;
+		$("#devision").val("1");
+		operate_set();
+		$("#editDiv").css("display","");
+		$("#editDiv").dialog({
+			title: "用户注册",
+			resizable: false,
+			height:430,
+			width:650,
+			modal: true,
+			show: "blind",
+			hide: "explode",
+			buttons: {
+				"提交": function() {
+// 					提交前先check
+					confirmCheck();
+				},
+				"取消": function() {
+					$(this).dialog("close");
+				}
+			}
+		});
+	}
+	
+	// 页面输入情报验证
+	function confirmCheck() {
+		var devision = $("#devision").val();
+		var userId = $("#userCode").val();
+		var userPassword = $("#userPassword").val();
+		var confirmPwd = $("#confirmPwd").val();
+		var userName = $("#userName").val();
+		if (userId == '') {
+// 			showDialog("#msgDialog",'用户工号必须输入<br> aaa。','');
+ 			showDialog("#msgDialog",EMS_W0001,'');
+			return;
+		}
+		if (userName == '') {
+// 			showDialog("#msgDialog",'用户姓名必须输入。','');
+			showDialog("#msgDialog",EMS_W0023,'');
+			return;
+		}
+		if(devision == '1'){
+			if (userPassword == '') {
+// 				showDialog("#msgDialog",'用户密码必须输入。','');
+				showDialog("#msgDialog",EMS_W0002,'');
+				return;
+			}
+			if (userPassword != confirmPwd) {
+// 				showDialog("#msgDialog",'用户密码和确认密码必须相同。','');
+				showDialog("#msgDialog",EMS_W0024,'');
+				return;
+			}
+		}
+		$.ajax({
+			type: "POST",
+			url: "tbCheckUserExist.action?userCode="+userId,
+			async: false,
+			success: function(msg){
+				if (msg == "") {
+					saveSystemUserData();
+				}
+				else {
+					showDialog("#msgDialog",msg,'');
+				}
+			},
+			error:function(msg){
+				showDialog("#msgDialog",msg,'');
+			}
+		});
+	}
+	function getPubValid() {
+		var engType;
+		$("input[name='pubValid']").each(function() {
+			if(this.checked) {
+				engType = this.value;
+				return false;
+			}
+		});
+		return engType;
+	}
+	// 保存
+	function saveSystemUserData(){
+		var userCode = $("#userCode").val();
+		var userPassword = $("#userPassword").val();
+		var confirmPwd = $("#confirmPwd").val();
+		var userName = $("#userName").val();
+		var userDescription = $("#userDescription").val();
+		var userEmail = $("#userEmail").val();
+		var userSex = $("#userSex").val();
+		var userPhone = $("#userPhone").val();
+		var userTitle = $("#userTitle").val();
+		var userUrl = $("#userUrl").val();
+		var devision = $("#devision").val();
+		var pubValid = getPubValid();
+		var plantType = $("#plantTypeV").val();
+		//添加
+		$.ajax({
+			type: "POST",
+			url: "tbSaveSystemUserPreserve.action",
+			data: "devision="+devision+"&userCode="+userCode+"&userPassword="+userPassword+"&userName="+userName
+				+"&userDescription=" + userDescription + "&userEmail="+userEmail
+				+"&userSex="+userSex+"&userPhone="+userPhone+"&userTitle="+userTitle+"&userUrl="+userUrl
+				+"&pubValid="+pubValid+"&plantType="+plantType+"&flag=1",
+			dataType: "text",
+			async: false,
+			success: function(msg){
+				showDialog("#msgDialog",msg,'#editDiv');
+				$("#editDiv").dialog("close");
+			},
+			error:function(msg){
+				showDialog("#msgDialog",msg,'');
+				$("#editDiv").dialog("close");
+				$("#editDiv").css("display","none");
+				$("editDiv").css("visibility", "false");
+			}
+		});
+	}
+	
+	//选中厂别联动组织岗位
+	//type: 2表示编辑，0表示选择厂别联动显示组织岗位
+	function changePlantType(){
+		var plantType = $("#plantTypeV").val();
+		var options = "";
+		$.ajax({
+			type:"post",
+			url:"tbGetDataByCond.action",
+			data:{plantType : plantType},
+			dataType:"json",
+			async:false,
+			success:function(text){
+				var sections = eval(text);
+				for(var i=0;i<sections.length;i++){
+					options += "<option value="+sections[i].id+">"+sections[i].name+"</option>";
+				}
+			},
+			error:function(msg){
+				showDialog("#msgDialog",msg,'');
+			}
+		});
+		$("#userTitle").empty();
+		$("#userTitle").append(options);
+	}
+	
+	// 员工编号位数限制
+	function userId_keyup(){
+		var userId = $("#userCode").val();
+		if(userId.length == 20){
+			$("#userName").focus();
+		}
+	}
+</script>
+<style type="text/css">
+
+
+body {
+	background: #f0f7ef;
+	font: 14px/150% Arial, Verdana, "微软雅黑"; 
+}
+
+
+.header {
+	background: url(skin/zpred/images/qq.png) repeat-x;
+	width: 100%;
+	height:77px;
+	position: relative;
+	float:left;
+	_height:570px;
+	
+	
+}
+
+.logo {
+	padding-left: 15px;
+	
+	width: 252px;
+	height: 81px;
+	
+}
+
+.login {
+	background: url(skin/zpred/images/1_12.png) repeat-x;
+	height: 264px;
+	width: 100%;
+	position:absolute;
+	top:200px;
+	
+	
+}
+
+.frame {
+	width: 1200px;
+	margin: auto;
+}
+
+.log_bg {
+	background: url(skin/zpred/images/1_08.png) no-repeat;
+	width: 1200px;
+	height: 404px;
+	margin:auto;
+	position: absolute;
+	top:-87px;
+}
+
+* html .login {
+	margin-top: 20px;
+} /*IE6识别*/
+.land {
+	width: 270px;
+	position: absolute;
+	top: 140px;
+	right: 320px;
+	_right:150px;
+}
+
+.land_user,.land_key {
+	color: #333;
+	margin: auto;
+	width: 270px;
+	height: 28px;
+	overflow: hidden;
+}
+
+.txt {
+	float: left;
+	line-height: 28px;
+	height: 14px;
+	width: 45px;
+	float: left;
+}
+
+.user_img {
+	background: url(skin/zpred/images/login.user.png) no-repeat 5px 4px
+		#f0f0f0;
+	width: 16px;
+	height: 20px;
+	float: left;
+}
+
+.key_img {
+	background: url(skin/zpred/images/Password.png) no-repeat 5px 4px
+		#f0f0f0;
+	width: 16px;
+	height: 20px;
+	float: left;
+}
+
+.tj {
+	width: 270px;
+	height: 32px;
+	float: left;
+}
+.tjMenuMode {
+	width: 270px;
+	height: 30px;
+	float: left;
+	margin-top:10px;
+}
+
+.input {
+	position: absolute;
+	top: 4px;
+	left: 0;
+}
+.pull{ float:right; border:0; _margin-top:-18px;}
+
+.foot{ width:100%; position: fixed; bottom:0; right:0; background:#e7e7e7; color:#b7b6b6; height:35px; line-height:35px; text-align:center; font-size:12px; z-index:999; zoom:1
+ }
+
+</style>
+</head>
+<body onkeydown="keyLogin();">
+	<div class="header">
+		<div class="logo">
+			<img src="skin/zpred/images/home_logo.jpg" />
+		</div>
+		<div class="login">
+		
+			<div class="frame">
+				<form id="dyk_loginform" action="" onSubmit="return loginSubmit();"
+					method="post">
+					<div class="log_bg">
+						<div class="land">
+						
+							<div class="lan_user" style="margin-top: 30px;">
+								<div class="txt fl">用户名</div>
+								<div
+									style="float: left; margin-left: 15px; _margin-left: 10px; padding-bottom: 30px;">
+									<input name="userId" id="userId" type="text" class="user_img"
+										value="${name!''}"
+										style="width: 160px; height: 28px; float: left; padding-left: 25px; _line-height: 28px; line-height: 28px\9;" />
+								</div>
+							</div>
+
+							<div class="lan_key">
+								<div class="txt fl">密码</div>
+								<div
+									style="float: left; margin-left: 15px; _margin-left: 10px; padding-bottom: 20px;">
+									<input type="password" id="psw" class="key_img"
+										style="width: 160px; height: 28px; float: left; padding-left: 25px; _line-height: 28px; line-height: 28px\9;"
+										value="${psw!''}" />
+									<input type="hidden" id="md5-password" name="psssword">
+								</div>
+							</div>
+
+							<div class="tj">
+								<!-- 登录 -->
+								<div style="width:auto; float:left; padding-left:20px;">
+									<input value="" name="signIn" id="signIn" style="border-right-width: 0px; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; width:96px; background: url(skin/zpred/images/denglu-btn.png) no-repeat; height: 32px; cursor: pointer;"	type="submit" border="0" />
+								</div>
+								<!-- 注册 -->
+								<div style="width:auto; float:left; padding-left:20px;">
+									<input value="" name="signMsg" id="signMsg" style=" float:left;  border-right-width: 0px; border-top-width: 0px; border-bottom-width: 0px; border-left-width: 0px; width:96px; background: url(skin/zpred/images/denglu-btn1.png) no-repeat; height: 32px; cursor: pointer;"	type="text" border="0" />
+								</div>
+
+							</div>
+							
+							<!-- 2015.5.6  菜单显示方式更改 mode -->
+							<div class="tjMenuMode" >
+								<div style="width: 280px; float:left; padding:5px 0 0 60px;">
+<!-- 									cym-20150813:树形导航默认选中 -->
+									<input type="radio" id="treModel" name="model" value="tre" checked/><label for="treModel">&nbsp;树形导航</label>&nbsp;&nbsp;&nbsp;&nbsp;
+									<input type="radio" id="hidModel" name="model" value="hid"/><label for="hidModel">&nbsp;列表导航</label>
+								</div>
+							</div>
+							<div style="width: 270px; height: 25px; float: left;">
+								<div style="width: 340px; color: green; float: left; font-family: 楷体;" align="right">
+									是否记住密码<input type="checkbox" name="remember" checked="true">
+								</div>
+							</div>
+						</div>
+						<div id="errorInfo" style="margin-top: 30px;position: absolute; bottom:0; right:0;color: #F00; width: 530px; word-wrap: break-word;"></div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+	<div id="editDiv" style="display: none; line-height: 40px;">
+		<table border="0" cellpadding="0" cellspacing="0" width="100%" height="120">
+			<tr>
+				<td>
+					<div id="txt" style="color:red"></div>
+				</td>
+				<td>
+					<input id="devision" type="hidden"/>
+				</td>
+			</tr>
+			<tr>
+				<td align="right" width="15%;">用户工号&nbsp;&nbsp;</td>
+				<td>
+					<input class="validate[required,maxSize[20]] text-input"
+					id="userCode" style="width:140px;" type="text" onkeyup="javascript:userId_keyup();" maxlength="20"/>
+				</td>
+				<td align="right" width="15%;">姓名&nbsp;&nbsp;</td>
+				<td>
+					<input class="validate[custom[isChinaOrLetterNumber],maxSize[128]] text-input"
+					id="userName" style="width:140px;" type="text" maxlength="128"/>
+				</td>
+			</tr>
+			<tr>
+				<td align="right" width="15%;">性别&nbsp;&nbsp;</td>
+				<td>
+					<select id="userSex" style="width:80px;">
+						<#if sexList ?exists>
+							<#list sexList as sex>
+								<option value='${sex.id}'>
+									${sex.name}
+								</option>
+							</#list>
+						</#if>
+					</select>
+				</td>
+				<td align="right" width="15%;">描述&nbsp;&nbsp;</td>
+				<td>
+					<input class="validate[custom[isChinaOrLetterNumber],maxSize[128]] text-input"
+					id="userDescription" style="width:140px;" type="text" maxlength="128"/>
+				</td>
+			</tr>
+			<tr>
+				<td align="right" width="15%;">邮件&nbsp;&nbsp;</td>
+				<td>
+					<input class="validate[maxSize[128]] text-input"
+					id="userEmail" style="width:140px;" type="text" maxlength="128"/>
+				</td>
+				<td align="right" width="15%;">电话&nbsp;&nbsp;</td>
+				<td>
+					<input class="validate[custom[isChinaOrLetterNumber],maxSize[128]] text-input"
+					id="userPhone" style="width:140px;" type="text" maxlength="128"/>
+				</td>
+			</tr>
+			<tr>
+				<td align="right" width="15%;">所属厂别&nbsp;&nbsp;</td>
+				<td colspan="3">
+					<select style="width:150px;" id="plantTypeV" onchange="changePlantType();">
+						<#if plantList? exists>
+						<#list plantList as item>
+							<option value='${item.id}'>${item.name}</option>
+						</#list>
+						</#if>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td align="right" width="15%;">组织岗位&nbsp;&nbsp;</td>
+				<td colspan="3">
+					<select id="userTitle" style="width:364px;">
+						<#if orgList ?exists>
+							<#list orgList as org>
+								<option value='${org.id}'>
+									${org.name}
+								</option>
+							</#list>
+						</#if>
+					</select>
+				</td>
+			</tr>
+			<tr>
+				<td align="right" width="15%;">密码&nbsp;&nbsp;</td>
+				<td>
+					<input class="validate[required,maxSize[60],custom[password]] text-input"
+					id="userPassword" style="width:140px;" type="password" maxlength="60"/>
+					<!-- 2015.5.8 del-->
+					<span style="display: none;">
+					<input class="validate[custom[isChinaOrLetterNumber],maxSize[256]] text-input"
+					id="userUrl" style="width:140px;" type="text" maxlength="256"/>
+					</span>
+				</td>
+				<td align="right" width="15%;">确认密码&nbsp;&nbsp;</td>
+				<td>
+					<input class="validate[required,maxSize[60],equals[password]] text-input"
+					id="confirmPwd" style="width:140px;" type="password" maxlength="60"/>
+				</td>
+			</tr>
+			<tr>
+				<td align="right" width="15%;">是否有效&nbsp;&nbsp;</td>
+				<td colspan="3">
+					<input type="radio" name="pubValid" value="1" id="pubValid1" checked="checked"/><label for="pubValid1">是</label>&nbsp;&nbsp; 
+					<input type="radio" name="pubValid" value="0" id="pubValid0"/><label for="pubValid0">否</label>&nbsp;&nbsp;
+				</td>
+			</tr>
+			<tr style="display: none;">
+				<td align="right" width="15%;">更新人&nbsp;&nbsp;</td>
+				<td>
+					<input class="text-input"
+					id="pubUser" style="width:140px;text-align:;" type="text" disabled="disabled"/>
+				</td>
+				<td align="right" width="15%;">更新时间&nbsp;&nbsp;</td>
+				<td>
+					<input class="text-input"
+					id="formatModifyTime" style="width:140px;text-align:;" type="text" disabled="disabled"/>
+				</td>
+			</tr>
+		</table>
+	</div>
+	<div id="msgDialog"></div>
+<!-- 	<iframe id="moxPage" width='0px' height='0px' src=''></iframe> -->
+	<div class="foot">			 版权所有：广州珠江啤酒集团有限公司   内容管理：设备部   技术管理：信息管理部   技术支持：上海今日能源工程有限公司		</div>
+</body>
+</html>

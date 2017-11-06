@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>javascript异常处理</title>
+    <script src="js/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+    'use strict';
+
+    /*    var r1, r2, r3 = 10,
+            s = null;
+        try {
+            r1 = s.length; //此处应该产生错误
+            r3 = r3 / 0; //Infinity
+            r2 = 1000; //该语句不会被执行
+        } catch (e) {
+            alert('出错了：' + e);
+        } finally {
+            console.log('finally');
+        }
+        console.log('r1 = ' + r1); // r1应为undefined
+        console.log('r2 = ' + r2); // r2应为undefined
+        console.log('r3 = ' + r3); // r3还是10
+    */
+
+    $(function() {
+        var $btn = $('#calc');
+
+        // 取消已绑定的事件:
+        $btn.off('click');
+
+        $btn.click(function() {
+            try {
+                var
+                    x = Number($('#x').val()),
+                    y = Number($('#y').val()),
+                    r;
+                if (isNaN(x) || isNaN(y)) {
+                    throw new Error('输入有误');
+                }
+                r = x + y;
+                alert('计算结果：' + r);
+            } catch (e) {
+                alert('出错了wuwuwu' + e);
+            }
+
+        });
+
+    });
+    </script>
+</head>
+
+<body>
+    <form>
+        <input id="x"> +
+        <input id="y">
+        <button id="calc" type="button">计算</button>
+    </form>
+</body>
+
+</html>

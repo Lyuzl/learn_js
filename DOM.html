@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>DOM元素</title>
+	<script type="text/javascript">
+		'use strict';
+		window.onload = function(){
+			/*var menu = document.getElementById('drink-menu');
+			var drinks = document.getElementsByTagName('dt');
+			console.log('menu:' + menu);
+			var i, s, menu, drinks;
+
+			menu = document.getElementById('drink-menu');
+			menu.tagName; // 'DL'
+
+			drinks = document.getElementsByTagName('dt');
+			s = '提供的饮料有:';
+			for (i=0; i<drinks.length; i++) {
+			    s = s + drinks[i].innerHTML + ',';
+			}
+			//alert(s);
+
+			var test = document.getElementById('test-div');
+			var testTag = document.getElementById('test-div').getElementsByTagName('td');
+			var testClass = document.getElementById('test-div').getElementsByClassName('myClass');
+			console.log(test);
+			console.log(testTag);
+			console.log(testClass);
+
+			//获取test下所有直属子节点
+			var child = test.children;
+			console.log(child);
+			var first = test.firstElementChild;
+			var last = test.lastElementChild;
+			console.log('first: ' + first);
+			console.log('last: ' + last);
+*/
+			// var
+			//     list = document.getElementById("list"),
+			//     ref = document.getElementById("python"),
+			//     haskell = document.createElement("p");
+			// haskell.id = "haskell";
+			// haskell.innerHTML = "Haskell";
+			// list.insertBefore(haskell, ref);
+
+			//按字符串顺序重新排序DOM节点：
+			//这个是最精简的做法，第一种方法
+			var list = document.getElementById('test-list')
+			var slist = list.children;
+			slist = Array.prototype.slice.call(slist).sort(function(a, b){
+			   return a.innerHTML > b.innerHTML ? 1 : -1 ;
+			})
+			slist.forEach(function(el){
+			     list.appendChild(el);
+			})
+
+			//第二种方法
+			var list = document.getElementById('test-list');
+			var forEach = Array.prototype.forEach  //想办法使用数组中的forEach方法
+			forEach.call(list.children, function(child){
+			    console.log(child.innerHTML);
+			    if(['Swift', 'ANSI C', 'DirectX'].indexOf(child.innerHTML) > -1){
+			        child.remove();
+			    }
+			})
+
+			//第三种方法
+			var web = ["JavaScript", "HTML", "CSS"];
+			var ul = document.getElementById("test-list");
+
+			for (var li of ul.children) {
+			    if(web.indexOf(li.innerText) === -1) {
+			        ul.removeChild(li);
+			    }
+			}
+
+
+			
+		}
+		
+	</script>
+	<script type="text/javascript">
+		
+	</script>
+</head>
+<body>
+<!-- 	<dl id="drink-menu" style="border:solid 1px #ccc;padding:6px;">
+	    <dt>摩卡</dt>
+	    <dd>热摩卡咖啡</dd>
+
+	    <dt>酸奶</dt>
+	    <dd>北京老酸奶</dd>
+
+	    <dt>果汁</dt>
+	    <dd>鲜榨苹果汁</dd>
+	</dl>
+	<div id="test">这是一个div</div>
+	<div id="test-div">
+		<table id="test-table">
+			<tr>
+				<td>MON</td>
+				<td>TUE</td>
+			</tr>
+			<tr>
+				<td>小米</td>
+				<td class="red">iPhone</td>
+			</tr>
+		</table>
+		<div class="myClass">myClass</div>
+		<div>children 1</div>
+	</div>
+	<p id="p-id">this is a p tag</p>
+
+<p id="js">JavaScript</p>
+<div id="list">
+    <p id="java">Java</p>
+    <p id="python">Python</p>
+    <p id="scheme">Scheme</p>
+</div> -->
+	
+	<ol id="test-list">
+	    <li class="lang">Scheme</li>
+	    <li class="lang">JavaScript</li>
+	    <li class="lang">Python</li>
+	    <li class="lang">Ruby</li>
+	    <li class="lang">Haskell</li>
+	</ol>
+	<div id="parent">
+		<p>one</p>
+		<p id="to-be-removed">将要被删除的段落</p>
+		<p>second</p>
+	</div>
+</body>
+</html>

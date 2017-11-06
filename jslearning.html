@@ -1,0 +1,79 @@
+<html>
+	<head>
+		<title>llv js study</title>
+		<script>
+			'use strict'
+			var a = ['A', 'B', 'C'];
+			var s = new Set(['Apple', 'Google', 'Yahoo']);
+			var m = new Map([[1, 'X'], [2, 'Y'], [3, 'Z']]);
+			a.forEach(function(element, index, array){
+				//element: 指向当前元素的值
+				//index ： 指向当前索引
+				//array :  指向Array对象本身
+				//console.log(element);
+				//console.log(array[index]);
+			});
+
+			//Set与Array类似，但Set没有索引，因此回调函数的前两个参数都是元素本身
+			s.forEach(function(element, sameElement, set){
+				//alert(element);
+			});
+
+			//Map的回调函数参数依次是value、key、map本身
+			m.forEach(function(value, key, map){
+				//alert(value)
+				//alert(key + ' = ' + value);
+			});
+
+			//
+			a.forEach(function(element){
+				//alert(element);
+			});
+
+			function foo(){
+				var x = 1;
+				x = x + 1;
+				console.log(x);
+			}
+
+			function bar(){
+				var x = 'A';
+				x = x + 'BB';
+				console.log(x);
+			}
+
+			//内部函数访问外部函数定义变量
+			function foo1(){
+				 var x = 1;
+				 function bar(){
+				 	var y = x + 1;
+				 	console.log('y = ' + y);
+				 }
+				 bar();
+				 //var z = y + 1;
+			}
+			// foo();
+			// bar();
+			// fn();
+
+			function foo2(){
+				var x = 1;
+				function bar(){
+					var x = 'A';
+					console.log(`x in bar(): ${x}`);
+				}
+				bar();
+				console.log(`x in foo2(): ${x}`);
+			}
+			// foo2();
+
+			name = 'lyu';
+			console.log(name);
+		</script>
+	</head>
+	<body>
+		<h1>欢迎来到JavaScript的真实世界！</h1>
+		<hr>
+		<h3>NOW IS YOUR SHOW TIME</h3>
+	</body>
+</html>

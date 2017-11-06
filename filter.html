@@ -1,0 +1,77 @@
+<html>
+<head>
+	<script type="text/javascript">
+		'use strict';
+		var arr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+		var arry = ['A', '', 'B', null, undefined, 'C', '  '];
+		var com = ['Apple', 'Google', 'Amason', 'Apple', 'Google'];
+		//返回奇数
+		var r = arr.filter(function(x){
+			return x%2 !== 0;
+		});
+
+		var r1 = arry.filter(function(x){
+			return x && x.trim();
+		});
+
+		var r2 = arr.filter(function(element, index, self){
+			console.log(element);
+			console.log(index);
+			console.log(self);
+			return true;
+		});
+
+		//巧妙去掉Array中的重复元素
+		var r3 = com.filter(function(element, index, self){
+			return self.indexOf(element) === index;
+		});
+		console.log(r3.toString());
+
+		//筛选出素数
+		function my_get_primes(arr){
+			var prime =	arr.filter(function(element, index, self){
+					for(var i=2; i<= element; i++){
+						if(element % i === 0 && element !== i){
+							console.log(element+'不是素数！');
+							break;
+							return;
+						}
+						if((index+1) === i){
+							return element;
+						}
+					}
+				});
+			return prime;
+		}
+
+		function get_primes(arr){
+			return arr.filter(function(element, index, self){
+				if(element === 1){
+					return false;
+				}
+				for(var i = 2; i<= Math.sqrt(element); i++){
+					if(element % i === 0){
+						return false;
+					}
+				}
+				return true;
+			});
+		}
+		// 测试:
+		var
+		    x,
+		    r,
+		    arr = [];
+		for (x = 1; x < 100; x++) {
+		    arr.push(x);
+		}
+		r = get_primes(arr);
+		if (r.toString() === [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67, 71, 73, 79, 83, 89, 97].toString()) {
+		    alert('测试通过!');
+		} else {
+		    alert('测试失败: ' + r.toString());
+		}
+	</script>
+</head>
+<body></body>
+</html>

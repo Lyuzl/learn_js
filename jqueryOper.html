@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>jQuery操作DOM</title>
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript">
+		'use strict';
+		//ready仅作用于document对象。由于ready事件在DOM完成初始化后触发，且只触发一次，所以非常适合用来写其他的初始化代码。
+		$(document).ready(function(){
+			console.log("页面被载入并且DOM树完成初始化");
+		});
+
+		$(function(){
+			/*var ul = $('#test-div>ul');
+			//1. 直接传字符串
+			ul.append('<li><span>Haskell</span></li>')
+
+			//创建DOM对象
+			var ps = document.createElement('li');
+			ps.innerHTML = '<span>Pascal</span>';
+			//2. 添加DOM对象
+			ul.append(ps);
+
+			//3. 添加jQuery对象
+			ul.append($('#scheme'));
+
+			//4. 添加函数对象
+			ul.append(function(index, html){
+				return '<li><span>Language-' + index + '</span></li>';
+			});
+
+			//prepend()把DOM添加到最前
+			// ul.prepend('<li><span>C++</span></li>');
+
+			//如果要把新节点插入到指定位置，例如，JavaScript和Python之间，那么，可以先定位到JavaScript，然后用after()方法：
+			var js = $('#test-div>ul>li:first-child');
+			js.after('<li><span>Scala</span></li>'); //js.before('<li><span>Scala</span></li>');
+
+			var li = $('#test-div>ul>li');
+			li.remove();  //所有的li节点被删除
+	*/
+
+		//练习：除了列出的3种语言外，请再添加Pascal、Lua和Ruby，然后按字母顺序排序节点：
+			var arr = ['Pascal', 'Lua', 'Ruby'];
+			var ul = $('#test-div ul');
+			var li = $('#test-div ul li');
+			//把原有元素也添加进数组中
+			//map()方法定义在JavaScript的Array中
+			li.map(function(){
+				arr.push(this.innerText); //
+			});
+			arr.sort();
+			li.remove();  //删除原li节点，因为它不会变
+			arr.forEach(x => ul.append('<li><span>' + x + '</span></li>'));
+			//测试
+			(function(){
+				var s = $('#test-div>ul>li').map(function(){
+					return $(this).text();
+				}).get().join(',');
+				if (s === 'JavaScript,Lua,Pascal,Python,Ruby,Swift') {
+					alert('测试通过！');
+				} else {
+					alert('测试失败：' + s);
+				}
+			})();
+	
+			//鼠标事件
+			var a = $('#test-link');
+			//方法1，用on绑定
+			// a.on('click', function(){
+			// 	alert('hello.');
+			// });
+
+			// //常用方法2， click方法
+			// a.click(function(){
+			// 	alert('hello, haha');
+			// });
+
+			a.dblclick(function(){
+				alert('双击');
+			});
+
+			var div = $('#test-div');
+			// div.mouseenter(function(){
+			// 	console.log('鼠标进入');
+			// });
+			// div.mouseleave(function(){
+			// 	console.log('鼠标离开');
+			// });
+			// div.mousemove(function(){
+			// 	console.log('鼠标在DOM内部移动时触发；');
+			// });
+			// div.hover(function(){
+			// 	console.log('鼠标进入和退出时触发两个函数，相当于mouseenter加上mouseleave');
+			// });
+
+			//键盘事件
+			var input = $('#name');
+			// input.keydown(function(){
+			// 	console.log('键盘按下');
+			// });
+			// input.keyup(function(){
+			// 	console.log('键盘松开');
+			// });
+			// input.keypress(function(){
+			// 	console.log('按一次键后触发');
+			// });
+
+			// 其它事件
+			input.focus(function(){
+				console.log('获得焦点');
+			});
+			input.blur(function(){
+				console.log('失去焦点');
+			});
+			input.change(function(){
+				console.log('input内容发生改变');
+			});
+
+			input.val('change...');  //单独用代码无法触发change事件
+			input.change();   //如果非要用代码触发，调用无参的change方法即可。
+			// //submit：当<form>提交时触发；
+			// var form = $('#test-form');
+			// form.submit(function(){
+			// 	console.log('表单提交');
+			// });
+
+
+
+		});
+
+
+	</script>
+</head>
+<body>
+	<div id="test-div">
+	    <ul>
+	        <li><span>JavaScript</span></li>
+	        <li><span>Python</span></li>
+	        <li><span>Swift</span></li>
+	    </ul>
+	</div>
+
+	<li id="scheme"><span>Scheme</span></li>
+	<a id="test-link" href="#">请点击</a>
+
+	<form id="test-form">
+		姓名：<input type="text" id="name" name="name">
+		<button type="submit">提交</button>
+	</form>
+	
+</body>
+</html>

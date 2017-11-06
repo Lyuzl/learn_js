@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>闭包基础</title>
+	<script>
+		'use strict';
+		//1、javascript函数中可以访问全局变量
+		// var n = 99;
+		// function f1(){
+		// 	alert('全局变量n:' + n);
+		// }
+		// f1();
+
+		//2、局部变量VS全局变量
+		// function f2(){
+		// 	nn = 99;  //不用var就相当于声明了一个全局变量
+		// 	var n = 88;  //这是定义局部变量
+		// }
+		// console.log('函数外部访问内部变量：(不可以滴)' + n); //n is not defined
+		// f2();
+		// console.log('函数内全局变量nn:' + nn);
+
+		//3、如何从外部访问函数内部变量
+		// function f1(){
+		// 	var n = 99;
+		// 	function f2(){
+		// 		alert(n);
+		// 	}
+		// }
+		// f1().f2();
+
+		//箭头函数
+		var result = x => x*x;
+		//两个参数
+		var f1 = (x, y) => x + y;
+		//无参数
+		var f2 = () => 3.14;
+
+		//可变参数
+		var f3 = (x, y, ...rest) => {
+			var i, sum = x + y;
+			for(i = 0; i < rest.length; i++){
+				sum += rest[i];
+			}
+			return sum;
+		}
+
+		console.log('两个参数调用f1():' + f1(3, 7));
+		console.log('无参数调用f2():' + f2());
+		console.log('可变参数调用f3():' + f3(2, 3, 1, 2, 3, 4));
+
+		var xx = x => x * x;
+		console.log('xx=' + xx(3));
+
+		var myobj = x => ({foo: x});  //注意：x => {foo: x}是错误的，要写成x => (foo: x)
+		console.log(myobj(3));
+		console.log(myobj(3).foo)
+
+		//再来探讨this
+		var obj = {
+			birth: 1997,
+			getAge: function(){
+				var b = this.birth;  //1997
+				var fn = function(){
+					return new Date().getFullYear() - this.birth;// this指向window或undefined
+				}
+				return fn();
+			}
+		};
+		//console.log('obj.getAge()传统方式：' + obj.getAge()); //Cannot read property 'birth' of undefined
+
+		//箭头函数中的this
+		var lyu = {
+			birth: 1992,
+			getAge:function(){
+				var b = this.birth; //1992
+				var fn = () => new Date().getFullYear() - this.birth; //this指向lyu对象。
+				return fn();
+			}
+		};
+		console.log('obj.getAge()箭头函数方式：' + lyu.getAge());
+
+		//由于this在箭头函数中已经按照词法作用域绑定了，所以，用call()或者apply()调用箭头函数时，无法对this进行绑定，即传入的第一个参数被忽略：
+		var lv = {
+			birth: 1992,
+			getAge: function(year){
+				var b = this.birth; //这里仍是1992
+				var fn = (x) => x - this.birth;
+				// return fn.call({year: 2000}, year);
+				return fn.apply({addr: '五道口'}, [year]);
+			}
+		};
+		console.log('call方式调用：' + lv.getAge(2017));
+	</script>
+</head>
+<body>
+	<h1>闭包秘籍，初学者必看！</h1>
+</body>
+</html>

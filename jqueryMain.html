@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>jQuery操作DOM</title>
+	<script src="js/jquery-3.2.1.min.js"></script>
+	<script type="text/javascript">
+		'use strict';
+		/*
+		jquery几大设计思想：
+		1. jQuery的基本设计思想和主要用法，就是"选择某个网页元素，然后对其进行某种操作"
+			　　$(document) //选择整个文档对象
+
+			　　$('#myId') //选择ID为myId的网页元素
+
+			　　$('div.myClass') // 选择class为myClass的div元素
+
+			　　$('input[name=first]') // 选择name属性等于first的input元素
+
+		2. 设计思想二， 提供强大的过滤器，对结果期进行筛选。
+
+				$('div').has('p'); // 选择包含p元素的div元素
+			　　$('div').not('.myClass'); //选择class不等于myClass的div元素
+			　　$('div').filter('.myClass'); //选择class等于myClass的div元素
+			　　$('div').first(); //选择第1个div元素
+			　　$('div').eq(5); //选择第6个div元素
+
+		3. 设计思想三， 链式操作。就是最终选中网页元素以后，可以对它进行一系列操作，
+		   并且所有操作可以连接在一起，以链条的形式写出来
+				
+				$('div').find('h3').eq(2).html('Hello');
+
+		4. 设计思想四，就是使用同一个函数，来完成取值（getter）和赋值（setter），即"取值器"与"赋值器"合一
+
+				$('h1').html(); //html()没有参数，表示取出h1的值
+			　　$('h1').html('Hello'); //html()有参数Hello，表示对h1进行赋值
+			
+				常见的取值和赋值函数如下：
+
+			　　.html() 取出或设置html内容
+			　　.text() 取出或设置text内容
+			　　.attr() 取出或设置某个属性的值
+			　　.width() 取出或设置某个元素的宽度
+			　　.height() 取出或设置某个元素的高度
+			　　.val() 取出某个表单元素的值
+		
+		5. 设计思想五，就是提供两组方法，来操作元素在网页中的位置移动。一组方法是直接移动该元素，
+		   另一组方法是移动其他元素，使得目标元素达到我们想要的位置。
+	
+			  //等效
+			　$('div').insertAfter($('p'));
+			  $('p').after($('div'));
+
+		6. 设计思想六，：除了对选中的元素进行操作以外，还提供一些与元素无关的工具方法（utility）。
+		   不必选中元素，就可以直接使用这些方法。
+				
+				$.trim() 去除字符串两端的空格。
+			　　$.each() 遍历一个数组或对象。
+			　　$.inArray() 返回一个值在数组中的索引位置。如果该值不在数组中，则返回-1。
+			　　$.grep() 返回数组中符合某种标准的元素。
+			　　$.extend() 将多个对象，合并到第一个对象。
+			　　$.makeArray() 将对象转化为数组。
+			　　$.type() 判断对象的类别（函数对象、日期对象、数组对象、正则对象等等）。
+			　　$.isArray() 判断某个参数是否为数组。
+			　　$.isEmptyObject() 判断某个对象是否为空（不含有任何属性）。
+			　　$.isFunction() 判断某个参数是否为函数。
+			　　$.isPlainObject() 判断某个参数是否为用"{}"或"new Object"建立的对象。
+			　　$.support() 判断浏览器是否支持某个特性。
+
+		7. 设计思想七，把事件直接绑定到网页元素上。
+
+			$('p').click(function(){
+		　　　　alert('Hello');
+		　　});
+
+			//目前jQuery主要支持的事件
+
+			.blur() 表单元素失去焦点。
+		　　.change() 表单元素的值发生变化
+		　　.click() 鼠标单击
+		　　.dblclick() 鼠标双击
+		　　.focus() 表单元素获得焦点
+		　　.focusin() 子元素获得焦点
+		　　.focusout() 子元素失去焦点
+		　　.hover() 同时为mouseenter和mouseleave事件指定处理函数
+		　　.keydown() 按下键盘（长时间按键，只返回一个事件）
+		　　.keypress() 按下键盘（长时间按键，将返回多个事件）
+		　　.keyup() 松开键盘
+		　　.load() 元素加载完毕
+		　　.mousedown() 按下鼠标
+		　　.mouseenter() 鼠标进入（进入子元素不触发）
+		　　.mouseleave() 鼠标离开（离开子元素不触发）
+		　　.mousemove() 鼠标在元素内部移动
+		　　.mouseout() 鼠标离开（离开子元素也触发）
+		　　.mouseover() 鼠标进入（进入子元素也触发）
+		　　.mouseup() 松开鼠标
+		　　.ready() DOM加载完成
+		　　.resize() 浏览器窗口的大小发生改变
+		　　.scroll() 滚动条的位置发生变化
+		　　.select() 用户选中文本框中的内容
+		　　.submit() 用户递交表单
+		　　.toggle() 根据鼠标点击的次数，依次运行多个函数
+		　　.unload() 用户离开页面
+
+			以上这些事件在jQuery内部，都是.bind()的便捷方式。使用.bind()可以更灵活地控制事件.
+		*/
+
+
+		$(function(){
+			$('#change').click(function(){
+				//链式写法，因为jQuery的每一步操作，返回的都是一个jQuery对象
+				$('div').find('h3').eq(2).html('Hello, World.');
+				//分开来写就是这样， 
+				// $('div') //找到div元素
+			// 　　　.find('h3') //选择其中的h3元素
+			// 　　　.eq(2) //选择第3个h3元素
+			// 　　　.html('Hello'); //将它的内容改为Hello
+			});
+
+			//jQuery还提供了.end()方法，使得结果集可以后退一步：
+			$('#back').click(function(){
+				$('div')
+					.find('h3')
+					.eq(2)
+					.html('Hello')
+					.end()  //退回到选中所有的h3元素的那一步
+					.eq(0)  //选中第一个h3元素
+					.html('World');  //修改它的内容为world
+			});
+
+			// ****************************************************************************
+			//要学会利用缓存，定义变量使用，因为jQuery选择器查找是耗时的。
+			var 
+				p = $('p[name=test-p]'),
+				div = $('div.lang'),
+				button1 = $('#afterDiv'),
+				button2 = $('#beforeDiv'),
+				button3 = $('#appendDiv'),
+				button4 = $('#prependDiv');
+
+			//把p段落移动到div后面
+			button1.click(function(){
+				//第一种方法是使用.insertAfter(), 把p元素移动到div后面
+				// p.insertAfter(div);
+
+				//第二种方式使用.after， 把div加到p前面。
+				div.after(p);
+
+				//表面上看，这两种方法的效果是一样的，唯一的不同似乎只是操作视角的不同。但是实际上，它们有一个重大差别，那就是返回的元素不一样。第一种方法返回div元素，第二种方法返回p元素。
+			});
+
+			button2.click(function(){
+				//p.insertBefore(div);
+				div.before(p);
+			});
+
+			//把段落一添加到div内部元素后面
+			button3.click(function(){
+				//方法一
+//				p.appendTo(div);
+
+				//方法二
+				div.append(p);
+			});
+
+			//把段落一添加到div内部元素前面
+			button4.click(function(){
+				//方法一
+				p.prependTo(div);
+
+				//方法二
+				// div.prepend(p);
+			});
+			// ****************************************************************************
+
+			//创建新元素的方法非常简单，只要把新元素直接传入jQuery的构造函数就行了
+			var myDOM = $('<p>这是通过jQuery构造函数创建的新元素。</p>');
+			//但是创建的新元素不会自动显示出来，需要手动把它添加到指定的位置。
+			p.append(myDOM);
+
+			//使用.bind()可以更灵活地控制事件，比如为多个事件绑定同一个函数
+			$('#test-bind').bind(
+
+				'click change', //同时绑定click和change方法
+				function(){
+					alert('hello!!');
+				}
+			);
+
+			//有时，你只想让事件运行一次，这时可以使用.one方法。
+			$('p[name=test-p]').one('click', function(){
+
+				alert('我只执行一次喔！！！');
+
+			});	
+
+			//.unbind()用来解除事件绑定
+			// $('p[name=test-p]').unbind('click');
+
+			//所有的事件处理函数，都可以接收一个事件对象（event object）,如下面的e
+			$('p[name=test-p]').click(function(e){
+
+				alert(e.type);  //click
+			})
+
+			$('#test-bind').bind(
+				'keydown mousedown', 
+				function(e){
+
+					$('#log').html(e.type + ': ' + e.which)
+			});
+
+			//event.data
+			for(var i = 0; i < 5; i++){
+				$('button[name=btn-group]').eq(i).bind(
+					'click',
+					{value: 'love'},
+					function(event){
+						var msg = ['buttons= ' + $(this).index(),
+									'event.data.value= ' + event.data.value,
+									'i= ' + i
+							];
+							$('#log').append(msg.join(', ') + "<br>");
+				});
+			}
+
+			//
+			$('a').click(function(e) {
+
+		　　　　if ($(this).attr('href').match('baidu')) { //如果确认为有害链接
+		　　　　　　e.preventDefault(); //阻止打开
+		　　　　　　$(this).addClass('evil'); //加上表示有害的class
+		　　　　}
+		　　});
+			
+			//*********************** 事件委托 ****************************
+			//比如，有一个表格（table元素），里面有100个格子（td元素），现在要求在每个格子上面绑定一个点击事件（click），请问是否需要将下面的命令执行100次？
+			// $('td').on('click', function(){
+			// 	$(this).toggleClass('click');
+			// });
+
+			//当然不需要，我们只要把这个事件绑定在table元素上面就可以了，因为td元素发生点击事件之后，这个事件会"冒泡"到父元素table上面，从而被监听到。
+			// $('table').on('click', 'td', function(){
+			// 	$(this).toggleClass('click');
+			// });
+
+			//更好的写法，是把事件绑定到document对象上
+			$(document).on("click", "td", function(){
+		　　　　$(this).toggleClass("click");
+		　　});
+
+			//移除事件绑定，使用off()方法
+			$(document).off('click', 'td');
+		});
+
+	</script>
+</head>
+<body>
+	<div class="lang" style="background-color: green; opacity: 0.7">
+		<h3>Python</h3>
+		<h3>Javascript</h3>
+		<h3>Basic</h3>
+		<h3>Haskell</h3>
+	</div>
+	<button id="change">修改第三个h3的内容</button>
+	<button id="back">回退</button>
+	
+	<hr>
+	<p name="test-p">段落一</p>
+	<button id="afterDiv">把段落一移动到div后</button>
+	<button id="beforeDiv">把段落一移动到div前</button>
+	<button id="appendDiv">在div内部，从后面插入段落一</button>
+	<button id="prependDiv">在div内部，从前面插入段落一</button>
+	<hr>
+
+	<input id="test-bind">
+	<button name="btn-group">A</button>
+	<button name="btn-group">B</button>
+	<button name="btn-group">C</button>
+	<button name="btn-group">D</button>
+	<button name="btn-group">E</button>
+	<a href="http://www.baidu.com">有害网站</a>
+	<div id="log" style="width: 90%; margin: 15px 0"></div>
+
+	<table style="border: 1px solid">
+		<th>
+			<td>姓名</td>
+			<td>学号</td>
+			<td>邮箱</td>
+			<td>班级</td>
+		</th>
+		<tr>
+			<td>欧阳锋</td>
+			<td>201100824129</td>
+			<td>gank@gmail.com</td>
+			<td>软件001班</td>
+		</tr>
+		<tr>
+			<td>洪七公</td>
+			<td>201100824128</td>
+			<td>solo@163.com</td>
+			<td>美食101班</td>
+		</tr>
+	</table>
+
+
+</body>
+</html>

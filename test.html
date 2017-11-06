@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>js对象测试</title>
+	<script type="text/javascript">
+		'use strict';
+		//原始方式定义对象
+		/*var cat1 = {};
+			cat1.name = '大毛';
+			cat1.color = '黄色';
+		var cat2 = {};
+			cat2.name = '二毛';
+			cat2.color = '黑色';
+		console.log(cat1.name);
+
+		//改进一
+		function Cat(name, color){
+			return {
+				name: name,
+				color: color
+			}
+		}
+		var cat1 = Cat('大毛', '黄色');
+		var cat2 = Cat('二毛', '黑色');
+		console.log('大毛color: ' +cat1.color);
+		console.log('二毛color: ' +cat2.color);
+
+		//改进二。 上述方法依然反映不出cat1和cat2之间的内在联系
+		//继续改进 构造函数模式
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+		var cat1 = new Cat('大毛', '黄色');
+		var cat2 = new Cat('二毛', '黑色');
+		console.log('大毛: ' + cat1.name + ', ' + cat1.color);
+		console.log('二毛: ' + cat2.name + ', ' + cat2.color);
+		console.log(cat1.constructor === Cat);
+		console.log(cat2.constructor === Cat);
+		console.log(cat1 instanceof Cat);
+
+		//改进三。 构造函数方式很好，但是有浪费内存的缺点，ex:
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+			this.type = '猫科动物';
+			this.eat = function(){
+				console.log('吃老鼠……');
+			};
+		}
+		var cat1 = new Cat('大毛', '黄色');
+		var cat2 = new Cat('二毛', '黑色');
+		console.log('大毛: ' + cat1.type);
+		cat1.eat();
+
+		console.log('cat1.eat === cat2.eat:' + (cat1.eat === cat2.eat)); //false  多不环保
+		console.log(cat1.type === cat2.type);
+
+		//改进四。 使用prototype模式
+		//javascript中，每个构造函数都有一个prototype属性，指向另一个对象。这个对象的所有属性和方法，都会被构造函数的实例继承。
+
+		//这意味着，我们可以把那些不变的属性和方法，直接定义在prototype上
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+		Cat.prototype.type = '猫科动物';
+		Cat.prototype.eat = function(){
+			console.log('吃老鼠……');
+		};
+
+		//再生成实例
+		var cat1 = new Cat('大毛', '黄色');
+		var cat2 = new Cat('二毛', '黑色');
+		console.log('cat1.type:' + cat1.type);
+		cat1.eat();
+
+		//此时所有的type属性和eat()方法，都指向了同一内存地址，指向prototype对象。
+		console.log('cat1.eat === cat2.eat: ' + (cat1.eat === cat2.eat)); 
+		console.log(Cat.prototype.isPrototypeOf(cat1));
+		console.log(Cat.prototype.isPrototypeOf(cat2));
+
+		console.log(cat1.hasOwnProperty('name'));  //true
+		console.log(cat1.hasOwnProperty('type'));  //false
+
+		console.log('name' in cat1);  //true
+		console.log('type' in cat1);  //true
+
+		for(var prop in cat1){
+			alert('cat1[' + prop + ']=' + cat1[prop]);
+		}
+*/
+
+		//第二部分——构造函数的继承
+		//下面两个函数，如何让猫继承动物呢？
+		/*function Animal(){
+			this.species = '动物';
+		}
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}*/
+
+		//方法一： 构造函数绑定
+/*		function Cat(naem, color){
+			Animal.apply(this, arguments);
+			this.name = name;
+			this.color = color;
+		}
+		var cat1 = new Cat("大毛", "黄色");
+		console.log(cat1.species);
+
+		//方法二： prototype方式绑定
+		//如果猫的prototype对象，指向一个Animal对象，那么猫的所有实例，就都继承了Animal了。
+		function Animal(){
+			this.species = '动物';
+		}
+
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+		Cat.prototype = new Animal();
+		Cat.prototype.constructor = Cat;  //把Cat.prototype对象的constructor值改为Cat。
+		var cat1 = new Cat("大毛", "黄色");
+		console.log(cat1.species);
+
+		//方式三: 直接继承prototype
+		function Animal(){}
+		Animal.prototype.species = "动物";
+
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+
+		Cat.prototype = Animal.prototype;  
+		Cat.prototype.constructor = Cat; //这一句实际上把Animal.prototype对象的constructor属性也改掉了！
+		var cat1 = new Cat("大毛", "黄色");
+		console.log(cat1.species);
+
+		//粗问题啦。。。
+		console.log("Cat.prototype.constructor=" + Cat.prototype.constructor);
+		console.log(Cat.prototype.constructor ===  Animal.prototype.constructor);  //true, 傻眼了吧
+
+		//方式四： 对方式三的改进——空对象做中介
+		function Animal(){}
+		Animal.prototype.species = "动物";
+
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+
+		// var F = function(){}
+		// F.prototype = Animal.prototype;
+		// Cat.prototype = new F();
+		// Cat.prototype.constructor = Cat;
+
+		// console.log(Animal.prototype.constructor);  //Animal
+		//将上述中介封装成一个函数，便于调用
+		function extend(Child, Parent){
+			var F = function(){}
+			F.prototype = Parent.prototype;
+			Child.prototype = new F();
+			Child.prototype.constructor = Child;
+		}
+		
+		//使用
+		extend(Cat, Animal);
+		var cat1 = new Cat("大毛", "黄色");
+		console.log(cat1.species);
+
+		//方式五： 除此之外，还有拷贝继承的方式
+		//首先要把Animal的所有不变属性，都放到它的prototype对象上
+		function Animal(){}
+		Animal.prototype.species = "动物";
+
+		function Cat(name, color){
+			this.name = name;
+			this.color = color;
+		}
+
+		function extend2(Child, Parent){
+			var p = Parent.prototype;
+			var c = Child.prototype;
+			for(var i in p){
+				c[i] = p[i];
+			}
+			//c.uber = p;
+		}
+
+		extend2(Cat, Animal);
+		var cat1 = new Cat("大毛", "黄色");
+		console.log(cat1.species);
+*/
+		//第三部分	非构造函数的继承， 我们想让doctor继承Chinese
+	/*	var Chinese = {
+			nation: "中国"
+		};
+		var Doctor = {
+			career: "医生"
+		};*/
+
+		//方式一  object方法
+		//object()函数，其实只做一件事，就是把子对象的prototype属性，指向父对象，从而使得子对象与父对象连在一起。
+/*		var Chinese = {
+			nation: "中国"
+		};
+
+		function object(Parent){
+			function F(){}
+			F.prototype = Parent;
+			return new F();
+		}
+		//使用时要现在父对象的基础上创建子对象
+		var Doctor = object(Chinese);
+		Doctor.name = "Andy";
+		console.log(Doctor.nation);
+
+		//方式二 浅拷贝，把父对象的属性，拷贝到子对象中
+		var Chinese = {
+			nation: "中国"
+		};
+
+		function extendCopy(Parent){
+			var child = {};
+			for(var i in Parent){
+				child[i] = Parent[i];
+			}
+			// child.uber = Parent;
+			return child;
+		}
+
+		// var Doctor = extendCopy(Chinese);
+		// Doctor.name = "Andy";
+		// console.log("Doctor.nation:" + Doctor.nation);
+
+		//改变：给Chinese添加出生地属性，值为数组
+		Chinese.birthPlaces = ["北京", "上海", "广州"];
+		var Doctor = extendCopy(Chinese);
+		Doctor.birthPlaces.push("信阳");
+		console.log("Doctor.birthPlaces:" + Doctor.birthPlaces);  //北京,上海,广州,信阳
+		console.log("Chinese.birthPlaces:" + Chinese.birthPlaces);  //北京,上海,广州,信阳
+		//父类Chinese的birthPlaces也别改变了！！！1 这是不对的
+
+		//方式三 深拷贝，改进上述方法
+		var Chinese = {
+			nation: "中国"
+		};
+
+		function deepCopy(p, c) {
+	　　　　var c = c || {};
+	　　　　for (var i in p) {
+	　　　　　　if (typeof p[i] === 'object') {
+	　　　　　　　　c[i] = (p[i].constructor === Array) ? [] : {};
+	　　　　　　　　deepCopy(p[i], c[i]);
+	　　　　　　} else {
+	　　　　　　　　　c[i] = p[i];
+	　　　　　　}
+	　　　　}
+	　　　　return c;
+	　　}
+
+		Chinese.birthPlaces = ['北京','上海','香港'];
+
+		//注意拷贝时机，一定要把父类的全部属性拷贝完！！！，原文位置错误
+		var Doctor = deepCopy(Chinese);
+		console.log(Doctor.nation); //中国
+
+　　　 	Doctor.birthPlaces.push('厦门');
+		
+		console.log("Doctor.birthPlaces:" + Doctor.birthPlaces);  //北京,上海,广州,信阳
+		console.log("Chinese.birthPlaces:" + Chinese.birthPlaces); //北京,上海,广州
+*/
+
+		//******************************  class继承  ***********************************
+		//ES6定义类的新方法！
+		class Student{
+			constructor(name){
+				this.name = name;
+			}
+			hello(){
+				console.log("Hello, " + this.name + "!");
+			}
+		}
+		// var xiaoming = new Student('小明');
+		// xiaoming.hello();
+		//继承方式写起来很溜
+		class PrimaryStudent extends Student{
+			constructor(name, grade){
+				super(name); //记得调用父类的构造方法
+				this.grade = grade;
+			}
+
+			myGrade(){
+				console.log("I am at grade " + this.grade);
+			}
+		}
+
+		var xiaohong = new PrimaryStudent("xiaohong", 99);
+		xiaohong.hello();
+		xiaohong.myGrade();
+	</script>
+</head>
+<body>
+
+</body>
+</html>

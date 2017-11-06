@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>高阶函数|闭包</title>
+	<script type="text/javascript">
+		'use strict';
+		function lazy_sum(arr){
+			var sum = function(){  //函数首先想着返回值是什么
+				return arr.reduce(function(x, y){
+					return x + y;
+				});
+			}
+			return sum;
+		}
+
+		var result = lazy_sum([1, 2, 3, 4]);
+		console.log('result: ' + result());
+
+
+		/*function count(){
+			var arr = [];
+			for(var i = 1; i <=3; i++){
+				arr.push(function(){
+					return i * i;
+				});
+			}
+			return arr;
+		}
+		var results = count();
+		console.log('results:' + results);  //结果是一个数组，里面三个函数
+		var f1 = results[0];
+		var f2 = results[1];
+		var f3 = results[2];
+		console.log('f1(): ' + f1());  //16  
+		console.log('f2(): ' + f2());  //16
+		console.log('f3(): ' + f3());  //16*/
+		//居然不是1， 4， 9是不是很不可思议？
+		//全部都是16！原因就在于返回的函数引用了变量i，但它并非立刻执行。等到3个函数都返回时，它们所引用的变量i已经变成了4，因此最终结果为16。
+
+		//返回闭包时牢记的一点就是：返回函数不要引用任何循环变量，或者后续会发生变化的变量。
+
+		// function count1(){
+		// 	var arr = [];
+		// 	for(var i = 1; i <= 3; i++){
+		// 		arr.push((function(n){
+		// 			return function(){
+		// 				return n * n;
+		// 			}
+		// 		})(i));
+		// 	}
+		// 	return arr;
+		// }
+		// var results = count1();
+		// var f1 = results[0];
+		// var f2 = results[1];
+		// var f3 = results[2];
+		// console.log('f1(): ' + f1());  //1
+		// console.log('f2(): ' + f2());  //4
+		// console.log('f3(): ' + f3());  //9
+
+		// //闭包难道仅仅是为了返回一个函数然后延迟执行吗？of course not!
+		// //闭包有更强大的作用，它可以像类那样封装私有变量。
+		// //举个栗子，创建一个计数器
+		// function create_counter(initial){
+		// 	var begin = initial || 0;
+		// 	return {
+		// 		inc: function(){
+		// 			begin += 1;
+		// 			return begin;
+		// 		}
+		// 	}
+		// }
+
+		var x = create_counter();
+		console.log(x.inc());  //1
+		console.log(x.inc());  //2
+		console.log(x.inc());  //3
+
+		var x1 = create_counter(18);
+		console.log(x1.inc()); //19
+		console.log(x1.inc()); //20
+		console.log(x1.inc()); //21
+
+		//闭包还可以多参数的函数变成单参数的函数
+		function make_bow(n){
+			return function(x){
+				return Math.pow(x, n);
+			}
+		}
+		var bow2 = make_bow(2);
+		var bow3 = make_bow(3);
+
+		console.log('8^2 = ' + bow2(8));
+		console.log('5^3 = ' + bow3(5));
+
+
+	</script>
+</head>
+<body>
+
+</body>
+</html>
